@@ -6,23 +6,21 @@ const config = require("../../shared/config");
 
 /**
  * Post users
- * 1. Yangi users qo'shishni faqat admin va super_admin qila olishi kerak
  * @param {express.Request} req
  * @param {express.Response} res
  */
 const postUsers = async (req, res) => {
   try {
-    const { first_name, last_name, role, username, password } = req.body;
+    const { full_name, phone_number, password, adress } = req.body;
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const result = await db("users")
       .insert({
-        first_name,
-        last_name,
-        role,
-        username,
+        full_name,
+        phone_number,
+        adress,
         password: hashedPassword,
       })
       .returning("*");
@@ -55,10 +53,10 @@ const getUsers = async (req, res) => {
     } = req.query;
     const dbQuery = db("users").select(
       "id",
-      "first_name",
-      "last_name",
+      "full_name",
+      "phone_number",
       "role",
-      "username"
+      "email"
     );
 
     if (role) {
@@ -66,8 +64,8 @@ const getUsers = async (req, res) => {
     }
     if (q) {
       dbQuery
-        .andWhereILike("first_name", `%${q}%`)
-        .orWhereILike("last_name", `%${q}%`);
+        .andWhereILike("full_name", `%${q}%`)
+        .orWhereILike("phone_number", `%${q}%`);
     }
 
     const total = await dbQuery.clone().count().groupBy("id");
@@ -102,7 +100,7 @@ const showUsers = async (req, res) => {
   try {
     const { id } = req.params;
     const users = await db("users")
-      .select("id", "first_name", "last_name", "role", "username")
+      .select("id", "full_name", "phone_number", "role", "email")
       .where({ id })
       .first();
 
@@ -130,16 +128,16 @@ const showUsers = async (req, res) => {
  */
 const loginUsers = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { phone_number, password } = req.body;
 
     const existing = await db("users")
-      .where({ username })
-      .select("id", "password", "role")
+      .where({ phone_number })
+      .select("id", "password", "phone_number")
       .first();
 
     if (!existing) {
       return res.status(401).json({
-        error: "Username yoki password xato.",
+        error: "phone_number yoki password xato.",
       });
     }
 
@@ -147,7 +145,7 @@ const loginUsers = async (req, res) => {
 
     if (!match) {
       return res.status(401).json({
-        error: "Username yoki password xato.",
+        error: "phone_number yoki password xato.",
       });
     }
 
@@ -197,7 +195,7 @@ const patchUsers = async (req, res) => {
     const updated = await db("users")
       .where({ id })
       .update({ ...changes })
-      .returning(["id", "first_name", "last_name", "role", "username"]);
+      .returning(["id", "full_name", "phone_number", "adress", "email"]);
 
     res.status(200).json({
       updated: updated[0],
@@ -230,7 +228,15 @@ const deleteUsers = async (req, res) => {
     const deleted = await db("users")
       .where({ id })
       .delete()
-      .returning(["id", "first_name", "last_name", "role", "username"]);
+      .returning([
+        "id",
+        "full_name",
+        "phone_number",
+        "role",
+        "email",
+        "password",
+        "adress",
+      ]);
 
     res.status(200).json({
       deleted: deleted[0],
