@@ -118,12 +118,11 @@ const postBrands = async (req, res, next) => {
     } = req.body;
     console.log(brand_name);
     console.log(filename);
-    const image = await db
+    const image = await db("images")
       .insert({
         filename,
         img_url: `http://localhost:7070/public/${filename}`,
       })
-      .into("pictures")
       .returning(["id", "img_url"]);
     const brand = await db("brands")
       .insert({
