@@ -1,4 +1,4 @@
-const { hashSync } = require("bcrypt");
+const { hashSync } = require("bcryptjs");
 
 /**
  * @param { import("knex").Knex } knex

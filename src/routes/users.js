@@ -3,6 +3,7 @@ const genValidator = require("../shared/validator");
 const { isLoggedIn, hasRole } = require("../shared/auth");
 const controllers = require("../controllers/users");
 const schemas = require("../controllers/users/schemas");
+const upload = require("../uploads");
 
 const router = express.Router();
 
@@ -36,6 +37,7 @@ router.post(
 
 router.patch(
   "/users/:id",
+  upload.single("avatar"),
   isLoggedIn,
   hasRole("super_admin", "admin", "user"),
   genValidator(schemas.patchUsersSchema),
