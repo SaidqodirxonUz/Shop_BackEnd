@@ -109,7 +109,6 @@ const patchBrands = async (req, res, next) => {
 };
 const postBrands = async (req, res, next) => {
   try {
-    const { filename } = req.file;
     const {
       brand_name,
       brands_uz_country,
@@ -117,6 +116,7 @@ const postBrands = async (req, res, next) => {
       brands_en_country,
     } = req.body;
     console.log(brand_name);
+    const { filename } = req.file;
     console.log(filename);
     const image = await db("images")
       .insert({
