@@ -24,7 +24,7 @@ const mPatchBrand = [
   isLoggedIn,
   isSuperAdmin,
 ];
-const mDeleteBrand = [isLoggedIn, isAdmin];
+const mDeleteBrand = [isLoggedIn, isSuperAdmin];
 
 router.post("/products/brands", mPostBrand, brandsController.postBrands);
 router.get("/products/brands", brandsController.getBrands);

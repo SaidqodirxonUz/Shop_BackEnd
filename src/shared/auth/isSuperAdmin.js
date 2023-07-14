@@ -13,7 +13,7 @@ const isSuperAdmin = (req, res, next) => {
     const token = req.headers.authorization;
     const payload = jwt.verify(token, process.env.SECRET_KEY);
     console.log(payload);
-    if (payload.role != "superAdmin") {
+    if (payload.role != "super_admin") {
       return res.status(403).json({
         message: "Forbidden",
       });
