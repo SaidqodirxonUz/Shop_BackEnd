@@ -3,7 +3,7 @@
  * @returns { Promise<void> }
  */
 exports.up = function (knex) {
-  knex.schema.createTable("images", (table) => {
+  return knex.schema.createTable("images", (table) => {
     table.increments("id").primary();
     // image_url, user_id, created_at
     table.string("filename").notNullable().unique();
@@ -20,5 +20,5 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-  knex.schema.dropTable("images");
+  return knex.schema.dropTable("images");
 };

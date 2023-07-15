@@ -3,17 +3,17 @@
  * @returns { Promise<void> }
  */
 exports.up = function (knex) {
-  knex.schema.createTable("categories", (table) => {
+  return knex.schema.createTable("categories", (table) => {
     table.increments("id").primary();
     table.string("uz_category_name", 150).notNullable().unique();
     table.string("ru_category_name", 150).notNullable().unique();
     table.string("en_category_name", 150).notNullable().unique();
     table.integer("img_id").references("id").inTable("images").unique();
-    table
-      .integer("category_id")
-      .references("id")
-      .inTable("categories")
-      .onDelete("CASCADE");
+    // table
+    //   .integer("category_id")
+    //   .references("id")
+    //   .inTable("categories")
+    //   .onDelete("CASCADE");
     table.timestamps(true, true);
   });
 };
@@ -23,5 +23,5 @@ exports.up = function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-  knex.schema.dropTable("categories");
+  return knex.schema.dropTable("categories");
 };
