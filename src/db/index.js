@@ -1,6 +1,5 @@
 const knex = require("knex");
 const config = require("../shared/config");
-
 const db = knex({
   client: "postgresql",
   connection: {

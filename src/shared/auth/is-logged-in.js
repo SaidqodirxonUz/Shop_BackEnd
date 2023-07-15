@@ -18,9 +18,9 @@ const isLoggedIn = (req, res, next) => {
       });
     }
 
-    const decoded = jwt.verify(token, config.jwt.secret);
+    const decoded = jwt.verify(token, "secret");
 
-    req.user = { id: decoded.id, role: decoded.role };
+    req.user = { id: decoded.id };
 
     next();
   } catch (error) {

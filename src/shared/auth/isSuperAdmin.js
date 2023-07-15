@@ -10,10 +10,12 @@ const jwt = require("jsonwebtoken");
 
 const isSuperAdmin = (req, res, next) => {
   try {
-    const token = req.headers.authorization;
-    const payload = jwt.verify(token, process.env.SECRET_KEY);
-    console.log(payload);
-    if (payload.role != "super_admin") {
+    // const token = req.headers.authorization;
+    // const payload = jwt.verify(token, process.env.SECRET_KEY);
+    const { role } = req.user;
+    
+    // console.log(payload);
+    if (role != "super_admin") {
       return res.status(403).json({
         message: "Forbidden",
       });

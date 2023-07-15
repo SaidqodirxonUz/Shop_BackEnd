@@ -12,17 +12,17 @@ const router = express.Router();
 
 const mPostBrand = [
   upload.single("image"),
-  genValidator(postBrandsSchema),
   isLoggedIn,
   isSuperAdmin,
+  genValidator(postBrandsSchema),
 ];
 // const mGetBrands = [isLoggedIn];
 // const mShowBrands = [isLoggedIn];
 const mPatchBrand = [
   upload.single("image"),
-  genValidator(patchBrandsSchema),
   isLoggedIn,
   isSuperAdmin,
+  genValidator(patchBrandsSchema),
 ];
 const mDeleteBrand = [isLoggedIn, isSuperAdmin];
 

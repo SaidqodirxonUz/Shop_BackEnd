@@ -149,13 +149,9 @@ const loginUsers = async (req, res) => {
       });
     }
 
-    const token = jwt.sign(
-      { id: existing.id, role: existing.role },
-      config.jwt.secret,
-      {
-        expiresIn: "1d",
-      }
-    );
+    const token = jwt.sign({ id: existing.id }, config.jwt.secret, {
+      expiresIn: "1d",
+    });
 
     res.status(200).json({
       token,
