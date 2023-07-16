@@ -12,7 +12,6 @@ const config = require("../../shared/config");
 const postUsers = async (req, res) => {
   try {
     const { full_name, phone_number, password, adress } = req.body;
-
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -21,6 +20,7 @@ const postUsers = async (req, res) => {
         full_name,
         phone_number,
         adress,
+        role: "user",
         password: hashedPassword,
       })
       .returning("*");
@@ -51,6 +51,7 @@ const getUsers = async (req, res) => {
       sort_by = "id",
       sort_order = "desc",
     } = req.query;
+
     const dbQuery = db("users").select(
       "id",
       "full_name",
@@ -64,8 +65,8 @@ const getUsers = async (req, res) => {
     }
     if (q) {
       dbQuery
-        .andWhereILike("full_name", `%${q}%`)
-        .orWhereILike("phone_number", `%${q}%`);
+        .where("full_name", "ilike", `%${q}%`)
+        .orWhere("phone_number", "ilike", `%${q}%`);
     }
 
     const total = await dbQuery.clone().count().groupBy("id");
@@ -132,7 +133,7 @@ const loginUsers = async (req, res) => {
 
     const existing = await db("users")
       .where({ phone_number })
-      .select("id", "password", "phone_number")
+      .select("id", "password", "phone_number", "role")
       .first();
 
     if (!existing) {
@@ -149,9 +150,13 @@ const loginUsers = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ id: existing.id }, config.jwt.secret, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign(
+      { id: existing.id, role: existing.role },
+      config.jwt.secret,
+      {
+        expiresIn: "1d",
+      }
+    );
 
     res.status(200).json({
       token,
@@ -252,5 +257,3 @@ module.exports = {
   patchUsers,
   deleteUsers,
 };
-
-// admin

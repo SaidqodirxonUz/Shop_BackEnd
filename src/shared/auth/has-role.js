@@ -4,7 +4,7 @@ const hasRole = (roles) => {
 
     if (!roles.includes(role)) {
       return res.status(403).json({
-        error: "Ruxsat berilmagan.",
+        error: "Forbidden.",
       });
     }
 

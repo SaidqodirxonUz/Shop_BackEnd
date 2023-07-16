@@ -14,18 +14,18 @@ const isLoggedIn = (req, res, next) => {
 
     if (!token) {
       return res.status(401).json({
-        error: "Login qilmagansiz.",
+        error: "Unauthorized.",
       });
+    } else {
+      const decoded = jwt.verify(token, config.jwt.secret);
+
+      req.user = { id: decoded.id, role: decoded.role };
+
+      next();
     }
-
-    const decoded = jwt.verify(token, "secret");
-
-    req.user = { id: decoded.id };
-
-    next();
   } catch (error) {
     return res.status(401).json({
-      error: "Login qilmagansiz.",
+      error: "Unauthorized.",
     });
   }
 };

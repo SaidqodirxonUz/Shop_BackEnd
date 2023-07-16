@@ -1,6 +1,6 @@
 const express = require("express");
 const genValidator = require("../shared/validator");
-const { isLoggedIn, isAdmin, isSuperAdmin } = require("../shared/auth");
+const { isLoggedIn, hasRole } = require("../shared/auth");
 const {
   postBrandsSchema,
   patchBrandsSchema,
@@ -13,7 +13,7 @@ const router = express.Router();
 const mPostBrand = [
   upload.single("image"),
   isLoggedIn,
-  isSuperAdmin,
+  hasRole(["super_admin"]),
   genValidator(postBrandsSchema),
 ];
 // const mGetBrands = [isLoggedIn];
@@ -21,10 +21,10 @@ const mPostBrand = [
 const mPatchBrand = [
   upload.single("image"),
   isLoggedIn,
-  isSuperAdmin,
+  hasRole(["super_admin"]),
   genValidator(patchBrandsSchema),
 ];
-const mDeleteBrand = [isLoggedIn, isSuperAdmin];
+const mDeleteBrand = [isLoggedIn, hasRole(["super_admin"])];
 
 router.post("/products/brands", mPostBrand, brandsController.postBrands);
 router.get("/products/brands", brandsController.getBrands);

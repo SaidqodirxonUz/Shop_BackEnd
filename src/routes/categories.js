@@ -1,6 +1,6 @@
 const express = require("express");
 const genValidator = require("../shared/validator");
-const { isLoggedIn, isAdmin } = require("../shared/auth");
+const { isLoggedIn, isAdmin, hasRole } = require("../shared/auth");
 const {
   postCategoriesSchema,
   patchCategoriesSchema,
@@ -12,17 +12,17 @@ const router = express.Router();
 
 const mPostCategories = [
   isLoggedIn,
-
+  hasRole(["super_admin"]),
   genValidator(postCategoriesSchema),
   upload.single("image"),
 ];
 const mPatchCategories = [
   isLoggedIn,
-
+  hasRole(["super_admin"]),
   genValidator(patchCategoriesSchema),
   upload.single("image"),
 ];
-const mDeleteCategories = [isLoggedIn];
+const mDeleteCategories = [isLoggedIn, hasRole(["super_admin"])];
 
 router.post(
   "/products/categories",
