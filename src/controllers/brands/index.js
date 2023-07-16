@@ -53,7 +53,7 @@ const showBrands = async (req, res, next) => {
       .groupBy("brands.id", "images.id")
       .first();
     if (!brand) {
-      res.status(400).json({
+      return res.status(400).json({
         error: `${id} - idli brand yo'q`,
       });
     }

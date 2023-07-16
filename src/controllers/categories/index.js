@@ -1,5 +1,5 @@
 const { default: knex } = require("knex");
-const { db } = require("../../db");
+const db = require("../../db");
 const { BadRequestErr, NotFoundErr } = require("../../shared/errors");
 
 /**
@@ -11,15 +11,20 @@ const { BadRequestErr, NotFoundErr } = require("../../shared/errors");
 const getCategories = async (req, res, next) => {
   // console.log(db("categories"));
   try {
-    const Categories = await db("categories").select(
-      "id",
-      "uz_category_name",
-      "ru_category_name",
-      "en_category_name"
-    );
-    return res.status(201).json({
+    const Categories = await db("categories")
+      .leftJoin("images", "images.id", "categories.img_id")
+      .select(
+        "categories.id",
+        "categories.uz_category_name",
+        "categories.ru_category_name",
+        "categories.en_category_name",
+        "categories.category_id",
+        "images.image_url"
+      )
+      .groupBy("categories.id", "images.id");
+    return res.status(200).json({
       message: "success",
-      data: Categories,
+      data: [...Categories],
     });
   } catch (error) {
     console.log(error);
@@ -40,7 +45,8 @@ const showCategories = async (req, res, next) => {
         "uz_category_name",
         "ru_category_name",
         "en_category_name",
-        "category_id"
+        "category_id",
+        "img_id"
       )
       .first();
     if (!category) {
@@ -48,12 +54,24 @@ const showCategories = async (req, res, next) => {
         error: `${id} - idli category yo'q`,
       });
     }
+    // console.log(category);
+    if (category.img_id) {
+      let id = category.img_id;
+      console.log(category.img_id);
+      imgUrl = await db("images").where({ id }).select("image_url");
+      console.log(imgUrl);
+      return res.status(201).json({
+        message: "success",
+        data: { ...category, ...imgUrl[0] },
+      });
+    }
     return res.status(201).json({
       message: "success",
-      data: category,
+      data: { ...category },
     });
   } catch (error) {
-    throw new BadRequestErr("Xatolik yuz berdi", error);
+    // throw new BadRequestErr("Xatolik yuz berdi", error);
+    next(error);
   }
 };
 const patchCategories = async (req, res, next) => {
@@ -67,49 +85,112 @@ const patchCategories = async (req, res, next) => {
         error: `${id}-idli category yo'q`,
       });
     }
+    if (req.file?.filename) {
+      let image = null;
+      let filename = req.file?.filename;
+      if (filename) {
+        image = await db
+          .insert({
+            filename,
+            image_url: `http://localhost:3000/public/${filename}`,
+          })
+          .into("images")
+          .returning(["id", "image_url", "filename"]);
+      }
+      const updated = await db("categories")
+        .where({ id })
+        .update({ ...changes, img_id: { image }.image[0]?.id || image })
+        .returning([
+          "id",
+          "uz_category_name",
+          "ru_category_name",
+          "en_category_name",
+          "category_id",
+          "img_id",
+        ]);
 
-    const updated = await db("categories")
-      .where({ id })
-      .update({ ...changes })
-      .returning(["id", "uz_category_name","ru_category_name","en_category_name"]);
+      res.status(200).json({
+        updated: [updated[0], ...image],
+      });
+    } else {
+      const updated = await db("categories")
+        .where({ id })
+        .update({ ...changes, img_id: null })
+        .returning([
+          "id",
+          "uz_category_name",
+          "ru_category_name",
+          "en_category_name",
+          "category_id",
+          "img_id",
+        ]);
 
-    res.status(200).json({
-      updated: updated[0],
-    });
+      res.status(200).json({
+        updated: updated[0],
+      });
+    }
   } catch (error) {
     console.log(error);
-    // res.status(400).json({
-    //   message: `Xatolik! ${error}`,
-    // });
-    throw new NotFoundErr("Nothing founded!");
+    res.status(400).json({
+      message: `Xatolik! ${error}`,
+    });
+    // throw new NotFoundErr("Nothing founded!");
   }
 };
 const postCategories = async (req, res, next) => {
   try {
-    const { uz_category_name, ru_category_name, en_category_name } = req.body;
-    const { filename } = req.file;
-    console.log(filename);
-    const image = await db("images")
-      .insert({
-        filename,
-        img_url: `http://localhost:7070/public/${filename}`,
-      })
-      .returning(["id", "img_url"]);
-    const category = await db("categories")
-      .insert({
-        uz_category_name: uz_category_name,
-        ru_category_name: ru_category_name,
-        en_category_name: en_category_name,
-        img_id: { image }.image[0].id,
-      })
-      .returning(["*"]);
+    const {
+      uz_category_name,
+      ru_category_name,
+      en_category_name,
+      category_id,
+    } = req.body;
+    if (req.file?.filename) {
+      const filename = req.file?.filename;
+      console.log(filename);
+      let image = null;
+      if (filename) {
+        image = await db("images")
+          .insert({
+            filename,
+            image_url: `http://localhost:7070/public/${filename}`,
+          })
+          .returning(["id", "image_url", "filename"]);
+      }
+      const category = await db("categories")
+        .insert({
+          uz_category_name,
+          ru_category_name,
+          en_category_name,
+          category_id,
+          img_id: { image }.image[0].id,
+        })
+        .returning(["*"]);
 
-    res.status(200).json({
-      data: category[0],
-    });
+      res.status(200).json({
+        data: category[0],
+      });
+    } else {
+      const category = await db("categories")
+        .insert({
+          uz_category_name,
+          ru_category_name,
+          en_category_name,
+          category_id,
+          img_id: null,
+        })
+        .returning(["*"]);
+      res.status(200).json({
+        data: category[0],
+      });
+    }
   } catch (error) {
     console.log(error);
-    throw new BadRequestErr("Something went wrong!", error);
+
+    res.status(400).json({
+      message: `Xatolik! ${error}`,
+    });
+    // throw new BadRequestErr("Something went wrong!", error);
     // res.send(error);
   }
 };
@@ -131,7 +212,11 @@ const deleteCategories = async (req, res, next) => {
     });
   } catch (error) {
     console.log(error);
-    throw new BadRequestErr("Something went wrong!", error);
+    // throw new BadRequestErr("Something went wrong!", error);
+
+    res.status(400).json({
+      message: `Xatolik! ${error}`,
+    });
   }
 };
 module.exports = {
