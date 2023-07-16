@@ -18,14 +18,14 @@ router.post(
 router.get(
   "/users",
   isLoggedIn,
-  hasRole(["super_admin", "admin"]),
+  hasRole(["super_admin"]),
   controllers.getUsers
 );
 
 router.get(
   "/users/:id",
   isLoggedIn,
-  hasRole(["super_admin", "admin"]),
+  hasRole(["super_admin"]),
   controllers.showUsers
 );
 
@@ -37,7 +37,6 @@ router.post(
 
 router.patch(
   "/users/:id",
-  upload.single("avatar"),
   isLoggedIn,
   hasRole("super_admin", "admin", "user"),
   genValidator(schemas.patchUsersSchema),
@@ -47,7 +46,7 @@ router.patch(
 router.delete(
   "/users/:id",
   isLoggedIn,
-  hasRole("super_admin", "admin"),
+  hasRole("super_admin"),
   controllers.deleteUsers
 );
 
