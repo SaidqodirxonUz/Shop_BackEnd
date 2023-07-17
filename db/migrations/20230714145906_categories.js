@@ -5,9 +5,9 @@
 exports.up = function (knex) {
   return knex.schema.createTable("categories", (table) => {
     table.increments("id").primary();
-    table.string("uz_category_name", 150).notNullable().unique();
-    table.string("ru_category_name", 150).notNullable().unique();
-    table.string("en_category_name", 150).notNullable().unique();
+    table.string("uz_category_name", 150).notNullable();
+    table.string("ru_category_name", 150).notNullable();
+    table.string("en_category_name", 150).notNullable();
     table.integer("img_id").references("id").inTable("images").unique();
     table
       .integer("category_id")

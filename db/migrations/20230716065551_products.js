@@ -9,12 +9,12 @@ exports.up = function (knex) {
     table.string("uz_name", 250).notNullable().unique();
     table.string("ru_name", 250).notNullable().unique();
     table.string("en_name", 250).notNullable().unique();
-    table.text("uz_description");
-    table.text("ru_description");
-    table.text("en_description");
-    table.decimal("price");
-    table.string("color", 100).notNullable();
-    table.string("aksiya", 250).notNullable();
+    table.text("uz_description").notNullable();
+    table.text("ru_description").notNullable();
+    table.text("en_description").notNullable();
+    table.decimal("price").notNullable();
+    table.string("color", 100);
+    table.string("aksiya", 250);
     table.string("size", 250);
     table.enum("status", ["sale", "in procces", "no"]);
     table.enum("valyuta", ["sum", "rub", "usd"]);

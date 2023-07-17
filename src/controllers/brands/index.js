@@ -40,23 +40,51 @@ const showBrands = async (req, res, next) => {
   try {
     const { id } = req.params;
     const brand = await db("brands")
-      .leftJoin("images", "images.id", "brands.img_id")
+      // .leftJoin("images", "images.id", "brands.img_id")
       .select(
-        "brands.id",
-        "brands.brand_name",
-        "brands.uz_country",
-        "brands.ru_country",
-        "brands.en_country",
-        "images.image_url"
+        "id",
+        "brand_name",
+        "uz_country",
+        "ru_country",
+        "en_country",
+        "img_id"
       )
       .where({ "brands.id": id })
-      .groupBy("brands.id", "images.id")
+      // .groupBy("brands.id", "images.id")
       .first();
     if (!brand) {
       return res.status(400).json({
         error: `${id} - idli brand yo'q`,
       });
     }
+    if (brand.img_id) {
+      let id = brand.img_id;
+      console.log(brand.img_id);
+      imgUrl = await db("images").where({ id }).select("image_url");
+      console.log(imgUrl);
+      return res.status(201).json({
+        message: "success",
+        data: { ...brand, ...imgUrl[0] },
+      });
+    }
+
+    // if (brand.img_id) {
+    //   let id = brand.img_id;
+    //   console.log(brand.img_id);
+
+    //   const imgurl = await db("brands")
+    //     .join("images", "brands.img_id", "=", "images.id")
+    //     .select("image_url")
+    //     .where("brands.id", id);
+
+    //   console.log(imgurl);
+
+    //   return res.status(201).json({
+    //     message: "success",
+    //     data: { ...brand, ...imgurl[0] },
+    //   });
+    // }
+
     return res.status(201).json({
       message: "success",
       data: brand,
