@@ -4,7 +4,7 @@ const { isLoggedIn, hasRole } = require("../shared/auth");
 const {
   postBrandsSchema,
   patchBrandsSchema,
-} = require("../controllers/brands/shemas/index");
+} = require("../controllers/brands/schemas/index");
 const brandsController = require("../controllers/brands");
 const upload = require("../uploads");
 
