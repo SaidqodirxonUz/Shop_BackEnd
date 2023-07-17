@@ -14,5 +14,5 @@ app.use(brandRoutes);
 app.use(categoryRoutes);
 
 app.listen(config.port, () => {
-  console.log(`Server ${config.port}-portda ishlayapti`);
+  console.log(`Server ${config.port} - portda ishlayapti`);
 });
