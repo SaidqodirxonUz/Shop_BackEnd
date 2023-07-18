@@ -3,6 +3,7 @@ const config = require("./shared/config");
 const userRoutes = require("./routes/users");
 const brandRoutes = require("./routes/brands");
 const categoryRoutes = require("./routes/categories");
+const productRoutes = require("./routes/products");
 
 const app = express();
 // app.use(bodyParser.urlencoded({ extended: true }));
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(userRoutes);
 app.use(brandRoutes);
 app.use(categoryRoutes);
+app.use(productRoutes);
 
 app.listen(config.port, () => {
   console.log(`Server ${config.port} - portda ishlayapti`);

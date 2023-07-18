@@ -1,44 +1,36 @@
 const express = require("express");
 const genValidator = require("../shared/validator");
-const { isLoggedIn, isAdmin, hasRole } = require("../shared/auth");
+const { isLoggedIn, hasRole } = require("../shared/auth");
 const {
-  postCategoriesSchema,
-  patchCategoriesSchema,
-} = require("../controllers/categories/schemas");
-const CategoriesController = require("../controllers/categories");
+  postProductsSchema,
+  patchProductsSchema,
+} = require("../controllers/products/schemas/index");
+const productsController = require("../controllers/products");
 const upload = require("../uploads");
 
 const router = express.Router();
 
-const mPostCategories = [
+const mPostProducts = [
+  upload.array("image"),
   isLoggedIn,
-  hasRole(["super_admin"]),
-  genValidator(postCategoriesSchema),
-  upload.single("image"),
+  hasRole(["admin"]),
+  genValidator(postProductsSchema),
 ];
-const mPatchCategories = [
+const mPatchProducts = [
+  upload.array("image"),
   isLoggedIn,
-  hasRole(["super_admin"]),
-  genValidator(patchCategoriesSchema),
-  upload.single("image"),
+  // hasRole(["admin"]),
+  genValidator(patchProductsSchema),
 ];
-const mDeleteCategories = [isLoggedIn, hasRole(["super_admin"])];
+const mDeleteProducts = [isLoggedIn, hasRole(["super_admin", "admin"])];
 
-router.post(
-  "/products/categories",
-  mPostCategories,
-  CategoriesController.postCategories
-);
-router.get("/products/categories", CategoriesController.getCategories);
-router.get("/products/categories/:id", CategoriesController.showCategories);
-router.patch(
-  "/products/categories/:id",
-  mPatchCategories,
-  CategoriesController.patchCategories
-);
+router.post("/products", mPostProducts, productsController.postProducts);
+router.get("/products", productsController.getProducts);
+router.get("/products/:id", productsController.showProducts);
+router.patch("/products/:id", mPatchProducts, productsController.patchProducts);
 router.delete(
-  "/products/categories/:id",
-  mDeleteCategories,
-  CategoriesController.deleteCategories
+  "/products/:id",
+  mDeleteProducts,
+  productsController.deleteProducts
 );
 module.exports = router;

@@ -50,7 +50,7 @@ const showCategories = async (req, res, next) => {
       )
       .first();
     if (!category) {
-      res.status(400).json({
+      return res.status(400).json({
         error: `${id} - idli category yo'q`,
       });
     }

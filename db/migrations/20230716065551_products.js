@@ -6,18 +6,21 @@ exports.up = function (knex) {
   return knex.schema.createTable("products", (table) => {
     table.increments("id").primary();
     // product name, description and price are required fields for a new product to be created
-    table.string("uz_name", 250).notNullable().unique();
-    table.string("ru_name", 250).notNullable().unique();
-    table.string("en_name", 250).notNullable().unique();
+    table.string("uz_product_name", 250).notNullable().unique();
+    table.string("ru_product_name", 250).notNullable().unique();
+    table.string("en_product_name", 250).notNullable().unique();
     table.text("uz_description").notNullable();
     table.text("ru_description").notNullable();
     table.text("en_description").notNullable();
     table.decimal("price").notNullable();
     table.string("color", 100);
-    table.string("aksiya", 250);
+    table.integer("aksiyafoizi").defaultTo(0);
     table.string("size", 250);
-    table.enum("status", ["sale", "in procces", "no"]);
-    table.enum("valyuta", ["sum", "rub", "usd"]);
+    table.integer("quantity").defaultTo(0);
+    table.enum("uz_status", ["sotuvda bor", "sotuvda emas"]).notNullable();
+    table.enum("ru_status", ["в наличии", "нет в наличии"]).notNullable();
+    table.enum("en_status", ["in stock", "not available"]).notNullable();
+    table.enum("valyuta", ["uzs", "rub", "usd"]).notNullable();
     table
       .integer("category_id")
       .unsigned()
@@ -47,6 +50,7 @@ exports.up = function (knex) {
       .onDelete("CASCADE")
       .onUpdate("RESTRICT");
     table.timestamps(true, true);
+    table.json('images')
 
     // table.timestamp("created_at").defaultTo(knex.fn.now());
     /*
