@@ -35,13 +35,19 @@ exports.up = function (knex) {
       .inTable("brands")
       .onDelete("CASCADE")
       .onUpdate("RESTRICT");
-    // table
-    //   .integer("img_id")
-    //   .references("id")
-    //   .inTable("categories")
-    //   .onDelete("CASCADE")
-    //   .onUpdate("RESTRICT");
-    // table.boolean("is_available").defaultTo(true);
+    table
+      .integer("img_id")
+      .references("id")
+      .inTable("images")
+      .onDelete("CASCADE")
+      .onUpdate("RESTRICT");
+    table
+      .string("img_url")
+      .references("image_url")
+      .inTable("images")
+      .onDelete("CASCADE")
+      .onUpdate("RESTRICT");
+    table.boolean("is_available").defaultTo(true);
     table
       .integer("user_id")
       .unsigned()
@@ -50,7 +56,7 @@ exports.up = function (knex) {
       .onDelete("CASCADE")
       .onUpdate("RESTRICT");
     table.timestamps(true, true);
-    table.json('images')
+    table.json("images");
 
     // table.timestamp("created_at").defaultTo(knex.fn.now());
     /*

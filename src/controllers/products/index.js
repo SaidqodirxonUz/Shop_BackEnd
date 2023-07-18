@@ -136,13 +136,7 @@ const patchProducts = async (req, res, next) => {
         .where({ id })
         .update({ ...changes })
         //  img_id: { image }.image[0]?.id || image
-        .returning([
-          "id",
-          "uz_product_name",
-          "ru_product_name",
-          "en_product_name",
-          "img_id",
-        ]);
+        .returning(["*"]);
 
       res.status(200).json({
         updated: [updated[0], ...image],
@@ -168,6 +162,7 @@ const patchProducts = async (req, res, next) => {
 const postProducts = async (req, res, next) => {
   try {
     const data = req.body;
+    const files = req?.files;
     // const products = await db("products")
     //   .insert({
     //     ...data,
@@ -176,23 +171,26 @@ const postProducts = async (req, res, next) => {
     if (req.files) {
       const images = req.files.map((file) => ({
         filemame: file.filename,
-        image_url: file.dhfjhsjf,
+        image_url: `http://localhost:3000/public/${file.filename}`,
       }));
+      console.log("mapped images", images);
+      // insert(images);
+      let image = await db("images")
+        .insert({ images })
+        .returning(["id", "image_url", "filename"]);
+      console.log(image, "inserted images");
 
-      insert(images);
-
-      urls = ["a", "v"];
+      // urls = ["a", "v"];
     }
 
     const products = await db("products")
       .insert({
         ...data,
-        images: ["a", "v"],
+        // images: ["a", "v"],
       })
       .returning(["*"]);
     // if (req.files) {
     //   let productImageRecord = null;
-    //   const files = req.files;
     //   console.log(files);
     //   let image = null;
     //   let product = null;
@@ -225,25 +223,25 @@ const postProducts = async (req, res, next) => {
     // console.log(productImageRecord);
     //   }
     //   console.log(productImageRecord, "..");
-      //   for (let i = 0; i < productImageRecord.length; i++) {
-      // const element = productImageRecord[i];
+    //   for (let i = 0; i < productImageRecord.length; i++) {
+    // const element = productImageRecord[i];
 
-      // console.log(element);
-      // let img = await db("images")
-      //   .select("image_url")
-      //   .where({ id: productImageRecord[i].img_id })
-      //   .first();
-      // images.push(img);
-      //   }
-      //   console.log(images);
+    // console.log(element);
+    // let img = await db("images")
+    //   .select("image_url")
+    //   .where({ id: productImageRecord[i].img_id })
+    //   .first();
+    // images.push(img);
+    //   }
+    //   console.log(images);
     //   console.log(images, "images");
     //   return res.status(200).json({
     //     data: { ...products[0], ...images[0] },
     //   });
     // } else {
-    //   return res.status(200).json({
-    //     data: products[0],
-    //   });
+    return res.status(200).json({
+      data: products[0],
+    });
     // }
   } catch (error) {
     console.log(error);
