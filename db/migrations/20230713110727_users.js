@@ -10,12 +10,6 @@ exports.up = function (knex) {
     table.string("email").unique();
     table.string("password", 350);
     table.string("adress", 300);
-    table
-      .integer("avatar_id", 350)
-      .references("id")
-      .inTable("images")
-      .onDelete("SET NULL");
-
     // table.string("avatar_id", 350).references("id").inTable("images").onDelete("SET NULL");
     table.timestamp("data_time").defaultTo(knex.fn.now()).notNullable();
     table.enum("role", ["admin", "super_admin", "user"]);
