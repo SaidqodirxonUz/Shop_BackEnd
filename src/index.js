@@ -1,7 +1,7 @@
 const express = require("express");
 const config = require("./shared/config");
 const userRoutes = require("./routes/users");
-const brandRoutes = require("./routes/brands");
+const orderRoutes = require("./routes/orders");
 const categoryRoutes = require("./routes/categories");
 const productRoutes = require("./routes/products");
 const vacanciesRoutes = require("./routes/vacancies");
@@ -13,7 +13,7 @@ app.use(express.static(__dirname + "/public"));
 
 app.use(express.json());
 app.use(userRoutes);
-app.use(brandRoutes);
+app.use(orderRoutes);
 app.use(categoryRoutes);
 app.use(productRoutes);
 app.use(vacanciesRoutes);
