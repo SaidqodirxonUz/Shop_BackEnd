@@ -28,30 +28,37 @@ exports.up = function (knex) {
       .inTable("categories")
       .onDelete("CASCADE")
       .onUpdate("RESTRICT");
-    table
-      .integer("brand_id")
-      .unsigned()
-      .references("id")
-      .inTable("brands")
-      .onDelete("CASCADE")
-      .onUpdate("RESTRICT");
-    table
-      .integer("img_id")
-      .references("id")
-      .inTable("images")
-      .onDelete("CASCADE")
-      .onUpdate("RESTRICT");
-    table
-      .string("img_url")
-      .references("image_url")
-      .inTable("images")
-      .onDelete("CASCADE")
-      .onUpdate("RESTRICT");
+    // table
+    //   .integer("brand_id")
+    //   .unsigned()
+    //   .references("id")
+    //   .inTable("brands")
+    //   .onDelete("CASCADE")
+    //   .onUpdate("RESTRICT");
+    // table
+    //   .integer("img_id")
+    //   .references("id")
+    //   .inTable("images")
+    //   .onDelete("CASCADE")
+    //   .onUpdate("RESTRICT");
+    // table
+    //   .string("img_url")
+    //   .references("image_url")
+    //   .inTable("images")
+    //   .onDelete("CASCADE")
+    //   .onUpdate("RESTRICT");
     table.boolean("is_available").defaultTo(true);
     table
       .integer("user_id")
       .unsigned()
       .references("id")
+      .inTable("users")
+      .onDelete("CASCADE")
+      .onUpdate("RESTRICT");
+    table
+      .string("brand_name")
+      .unsigned()
+      .references("brand_name")
       .inTable("users")
       .onDelete("CASCADE")
       .onUpdate("RESTRICT");

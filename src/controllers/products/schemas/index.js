@@ -15,8 +15,8 @@ exports.postProductsSchema = Joi.object({
   ru_status: Joi.string().valid("в наличии", "нет в наличии").required(),
   en_status: Joi.string().valid("in stock", "not available").required(),
   valyuta: Joi.string().valid("uzs", "rub", "usd").required(),
+  brand_name: Joi.string().required(),
   category_id: Joi.number().integer().required(),
-  brand_id: Joi.number().integer().required(),
   user_id: Joi.number().integer().required(),
 });
 exports.patchProductsSchema = Joi.object({
@@ -34,7 +34,7 @@ exports.patchProductsSchema = Joi.object({
   ru_status: Joi.string().valid("в наличии", "нет в наличии"),
   en_status: Joi.string().valid("in stock", "not available"),
   valyuta: Joi.string().valid("uzs", "rub", "usd"),
+  brand_name: Joi.string(),
   category_id: Joi.number().integer(),
-  brand_id: Joi.number().integer(),
   user_id: Joi.number().integer(),
 });

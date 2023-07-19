@@ -1,13 +1,14 @@
 const hasRole = (roles) => {
   return (req, res, next) => {
-    const { role } = req.user;
+    if (req.user) {
+      const { role } = req?.user;
 
-    if (!roles.includes(role)) {
-      return res.status(403).json({
-        error: "Forbidden.",
-      });
+      if (!role || !roles.includes(role)) {
+        return res.status(403).json({
+          error: "Forbidden.",
+        });
+      }
     }
-
     next();
   };
 };

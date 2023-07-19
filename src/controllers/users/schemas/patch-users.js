@@ -6,5 +6,9 @@ exports.patchUsersSchema = Joi.object({
   email: Joi.string(),
   password: Joi.string().min(8),
   adress: Joi.string(),
+  brand_name: Joi.string(),
+  brand_uz_country: Joi.string(),
+  brand_ru_country: Joi.string(),
+  brand_en_country: Joi.string(),
   role: Joi.string().valid("admin"),
 });

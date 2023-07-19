@@ -11,7 +11,16 @@ const config = require("../../shared/config");
  */
 const postUsers = async (req, res) => {
   try {
-    const { full_name, phone_number, password, adress } = req.body;
+    const {
+      full_name,
+      phone_number,
+      password,
+      adress,
+      brand_name,
+      brand_uz_country,
+      brand_ru_country,
+      brand_en_country,
+    } = req.body;
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -20,6 +29,10 @@ const postUsers = async (req, res) => {
         full_name,
         phone_number,
         adress,
+        brand_name,
+        brand_uz_country,
+        brand_ru_country,
+        brand_en_country,
         role: "user",
         password: hashedPassword,
       })

@@ -11,33 +11,31 @@ const db = require("../../db");
 const getProducts = async (req, res, next) => {
   // console.log(db("Products"));
   try {
-    const Products = await db("products")
-      .leftJoin("product_images", "product_images.productId", "products.id")
-      .leftJoin("images", "images.id", "product_images.img_id")
-      .select(
-        "products.id",
-        "products.uz_product_name",
-        "products.ru_product_name",
-        "products.en_product_name",
-        "products.uz_description",
-        "products.ru_description",
-        "products.en_description",
-        "products.category_id",
-        "products.brand_id",
-        "products.user_id",
-        "products.uz_status",
-        "products.ru_status",
-        "products.en_status",
-        "products.color",
-        "products.quantity",
-        "products.valyuta",
-        "products.aksiyafoizi",
-        "images.image_url"
-      )
-      .groupBy("products.id", "images.id", "product_images.id");
+    const Products = await db("products").select("*");
+    // .leftJoin("product_images", "product_images.productId", "products.id")
+    // .leftJoin("images", "images.id", "product_images.img_id")
+    // .groupBy("products.id", "images.id", "product_images.id");
+    // "products.id",
+    // "products.uz_product_name",
+    // "products.ru_product_name",
+    // "products.en_product_name",
+    // "products.uz_description",
+    // "products.ru_description",
+    // "products.en_description",
+    // "products.category_id",
+    // "products.brand_id",
+    // "products.user_id",
+    // "products.uz_status",
+    // "products.ru_status",
+    // "products.en_status",
+    // "products.color",
+    // "products.quantity",
+    // "products.valyuta",
+    // "products.aksiyafoizi",
+    // "images.image_url"
     return res.status(200).json({
       message: "success",
-      data: [...Products],
+      data: Products,
     });
   } catch (error) {
     console.log(error);
@@ -51,55 +49,52 @@ const getProducts = async (req, res, next) => {
 const showProducts = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const product = await db("products")
-      .where({ id })
-      .select(
-        "id",
-        "uz_product_name",
-        "ru_product_name",
-        "en_product_name",
-        "uz_description",
-        "ru_description",
-        "en_description",
-        "category_id",
-        "brand_id",
-        "user_id",
-        "uz_status",
-        "ru_status",
-        "en_status",
-        "color",
-        "quantity",
-        "valyuta",
-        "aksiyafoizi"
-      )
-      .first();
+    const product = await db("products").where({ id }).select("*").first();
+    // "id",
+    // "uz_product_name",
+    // "ru_product_name",
+    // "en_product_name",
+    // "uz_description",
+    // "ru_description",
+    // "en_description",
+    // "category_id",
+    // "brand_id",
+    // "user_id",
+    // "uz_status",
+    // "ru_status",
+    // "en_status",
+    // "color",
+    // "quantity",
+    // "valyuta",
+    // "aksiyafoizi",
+    // "images"
     if (!product) {
       return res.status(400).json({
         error: `${id} - idli product yo'q`,
       });
     }
     // console.log(product);
-    if (product) {
-      let productId = product.id;
-      console.log(product.id);
-      let img_id = await db("product_images")
-        .where({ productId })
-        .select("img_id")
-        .first();
-      console.log(img_id, "this is imgid");
-      if (!img_id) {
-        return res.status(201).json({
-          message: "success",
-          data: { ...product },
-        });
-      }
-      imgUrl = await db("images").where({ img_id }).select("image_url");
+    // if (product) {
+    // let productId = product.id;
+    // console.log(product.id);
+    // let img_id = await db("product_images")
+    //   .where({ productId })
+    //   .select("img_id")
+    //   .first();
+    // console.log(img_id, "this is imgid");
+    // if (!img_id) {
+    //   return res.status(201).json({
+    //     message: "success",
+    //     data: { ...product },
+    //   });
+    // }
+    // imgUrl = await db("images").where({ img_id }).select("image_url");
 
-      return res.status(201).json({
-        message: "success",
-        data: { ...product, ...imgUrl[0] },
-      });
-    }
+    return res.status(201).json({
+      message: "success",
+      data: { ...product },
+    });
+    // }
     // return res.status(201).json({
     //   message: "success",
     //   data: { ...product },
@@ -113,6 +108,8 @@ const patchProducts = async (req, res, next) => {
   try {
     const { ...changes } = req.body;
     const { id } = req.params;
+    const reqfile = req?.files;
+    console.log(reqfile, "request files");
     const existing = await db("products").where({ id }).first();
 
     if (!existing) {
@@ -120,26 +117,25 @@ const patchProducts = async (req, res, next) => {
         error: `${id}-idli product yo'q`,
       });
     }
-    if (req.file?.filename) {
-      let image = null;
-      let filename = req.file?.filename;
-      if (filename) {
-        image = await db
-          .insert({
-            filename,
-            image_url: `http://localhost:3000/public/${filename}`,
-          })
-          .into("images")
-          .returning(["id", "image_url", "filename"]);
-      }
+    // if (req.file?.filename) {
+    if (req.files) {
+      const files = req.files.map((file) => ({
+        filename: file.filename,
+        image_url: `http://localhost:3000/public/${file.filename}`,
+      }));
+      console.log("mapped images", files);
+      // insert(images);
+      let images = await db("images")
+        .insert(files)
+        .returning(["id", "image_url", "filename"]);
+
       const updated = await db("products")
         .where({ id })
-        .update({ ...changes })
-        //  img_id: { image }.image[0]?.id || image
+        .update({ ...changes, images: { ...images } })
         .returning(["*"]);
 
-      res.status(200).json({
-        updated: [updated[0], ...image],
+      return res.status(200).json({
+        updated: [updated[0]],
       });
     } else {
       const updated = await db("products")
@@ -170,25 +166,28 @@ const postProducts = async (req, res, next) => {
     //   .returning(["*"]);
     if (req.files) {
       const images = req.files.map((file) => ({
-        filemame: file.filename,
+        filename: file.filename,
         image_url: `http://localhost:3000/public/${file.filename}`,
       }));
       console.log("mapped images", images);
       // insert(images);
       let image = await db("images")
-        .insert({ images })
+        .insert(images)
         .returning(["id", "image_url", "filename"]);
-      console.log(image, "inserted images");
+      // console.log(image, "inserted images");
 
       // urls = ["a", "v"];
+      const products = await db("products")
+        .insert({
+          ...data,
+          images: { ...image },
+        })
+        .returning(["*"]);
+      return res.status(200).json({
+        data: products[0],
+      });
     }
 
-    const products = await db("products")
-      .insert({
-        ...data,
-        // images: ["a", "v"],
-      })
-      .returning(["*"]);
     // if (req.files) {
     //   let productImageRecord = null;
     //   console.log(files);
@@ -239,9 +238,6 @@ const postProducts = async (req, res, next) => {
     //     data: { ...products[0], ...images[0] },
     //   });
     // } else {
-    return res.status(200).json({
-      data: products[0],
-    });
     // }
   } catch (error) {
     console.log(error);
