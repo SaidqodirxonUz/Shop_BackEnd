@@ -105,20 +105,10 @@ const patchOrder = async (req, res, next) => {
     });
   }
 };
-const postOrder = async (req, res, next) => {
+const postOrder = async (req, res) => {
   try {
     const data = req.body;
-    // console.log(order_name);
-    // if (req.file?.filename) {
-    // const { filename } = req.file;
-    // let filename = req.file?.filename;
 
-    // const image = await db("images")
-    //   .insert({
-    //     filename,
-    //     image_url: `http://localhost:3000/public/${filename}`,
-    //   })
-    //   .returning(["id", "image_url", "filename"]);
     const order = await db("orders")
       .insert({
         ...data,
