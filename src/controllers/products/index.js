@@ -121,7 +121,7 @@ const patchProducts = async (req, res, next) => {
     if (req.files) {
       const files = req.files.map((file) => ({
         filename: file.filename,
-        image_url: `http://localhost:3000/public/${file.filename}`,
+        image_url: `https://api.victoriaslove.uz/public/${file.filename}`,
       }));
       console.log("mapped images", files);
       // insert(images);
@@ -167,7 +167,7 @@ const postProducts = async (req, res, next) => {
     if (req.files) {
       const images = req.files.map((file) => ({
         filename: file.filename,
-        image_url: `http://localhost:3000/public/${file.filename}`,
+        image_url: `https://api.victoriaslove.uz/public/${file.filename}`,
       }));
       console.log("mapped images", images);
       // insert(images);
@@ -202,7 +202,7 @@ const postProducts = async (req, res, next) => {
     //     image = await db("images")
     //       .insert({
     //         filename,
-    //         image_url: `http://localhost:3000/public/${filename}`,
+    //         image_url: `https://api.victoriaslove.uz/public/${filename}`,
     //       })
     //       .returning(["id", "image_url", "filename"]);
     //     console.log(image);

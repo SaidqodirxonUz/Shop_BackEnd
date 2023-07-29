@@ -92,7 +92,7 @@ const patchCategories = async (req, res, next) => {
         image = await db
           .insert({
             filename,
-            image_url: `http://localhost:3000/public/${filename}`,
+            image_url: `https://api.victoriaslove.uz/public/${filename}`,
           })
           .into("images")
           .returning(["id", "image_url", "filename"]);
