@@ -39,7 +39,7 @@ router.post("/vacancies", sPostVacancies, vacanciesController.postVacancies);
 
 router.get("/vacancies", vacanciesController.getVacancies);
 
-router.get("/vacancies/:id", sGetVacancies, vacanciesController.showVacancies);
+router.get("/vacancies/:id", vacanciesController.showVacancies);
 
 router.patch(
   "/vacancies/:id",

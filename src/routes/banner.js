@@ -21,8 +21,8 @@ const sPostBanner = [
 // const mShowBanner = [isLoggedIn];
 
 const sGetBanner = [
-  isLoggedIn,
-  hasRole(["super_admin"]),
+  // isLoggedIn,
+  // hasRole(["super_admin"]),
   genValidator(getBannerSchema),
 ];
 

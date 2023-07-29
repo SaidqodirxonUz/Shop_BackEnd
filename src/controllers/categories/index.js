@@ -153,7 +153,7 @@ const postCategories = async (req, res, next) => {
         image = await db("images")
           .insert({
             filename,
-            image_url: `http://localhost:7070/public/${filename}`,
+            image_url: `https://api.victoriaslove.uz/public/${filename}`,
           })
           .returning(["id", "image_url", "filename"]);
       }
