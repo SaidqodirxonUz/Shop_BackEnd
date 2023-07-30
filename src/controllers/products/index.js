@@ -13,26 +13,6 @@ const getProducts = async (req, res, next) => {
   try {
     const Products = await db("products").select("*");
     // .leftJoin("product_images", "product_images.productId", "products.id")
-    // .leftJoin("images", "images.id", "product_images.img_id")
-    // .groupBy("products.id", "images.id", "product_images.id");
-    // "products.id",
-    // "products.uz_product_name",
-    // "products.ru_product_name",
-    // "products.en_product_name",
-    // "products.uz_description",
-    // "products.ru_description",
-    // "products.en_description",
-    // "products.category_id",
-    // "products.brand_id",
-    // "products.user_id",
-    // "products.uz_status",
-    // "products.ru_status",
-    // "products.en_status",
-    // "products.color",
-    // "products.quantity",
-    // "products.valyuta",
-    // "products.aksiyafoizi",
-    // "images.image_url"
     return res.status(200).json({
       message: "success",
       data: Products,
@@ -50,24 +30,7 @@ const showProducts = async (req, res, next) => {
   try {
     const { id } = req.params;
     const product = await db("products").where({ id }).select("*").first();
-    // "id",
-    // "uz_product_name",
-    // "ru_product_name",
-    // "en_product_name",
-    // "uz_description",
-    // "ru_description",
-    // "en_description",
-    // "category_id",
-    // "brand_id",
-    // "user_id",
-    // "uz_status",
-    // "ru_status",
-    // "en_status",
-    // "color",
-    // "quantity",
-    // "valyuta",
-    // "aksiyafoizi",
-    // "images"
+   
     if (!product) {
       return res.status(400).json({
         error: `${id} - idli product yo'q`,
@@ -121,7 +84,7 @@ const patchProducts = async (req, res, next) => {
     if (req.files) {
       const files = req.files.map((file) => ({
         filename: file.filename,
-        image_url: `http://localhost:3000/${file.filename}`,
+        image_url: `https://api.victoriaslove.uz/${file.filename}`,
       }));
       console.log("mapped images", files);
       // insert(images);
@@ -167,7 +130,7 @@ const postProducts = async (req, res, next) => {
     if (req.files) {
       const images = req.files.map((file) => ({
         filename: file.filename,
-        image_url: `http://localhost:3000/${file.filename}`,
+        image_url: `https://api.victoriaslove.uz/${file.filename}`,
       }));
       console.log("mapped images", images);
       // insert(images);

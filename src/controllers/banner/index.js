@@ -120,7 +120,7 @@ const patchBanner = async (req, res, next) => {
         image = await db
           .insert({
             filename,
-            image_url: `http://localhost:3000/${filename}`,
+            image_url: `http://api.victoriaslove.uz/${filename}`,
           })
           .into("images")
           .returning(["id", "image_url", "filename"]);
@@ -191,7 +191,7 @@ const postBanner = async (req, res, next) => {
       const image = await db("images")
         .insert({
           filename,
-          image_url: `http://localhost:3000/${filename}`,
+          image_url: `https://api.victoriaslove.uz/${filename}`,
         })
         .returning(["id", "image_url", "filename"]);
       const banner = await db("banner")
