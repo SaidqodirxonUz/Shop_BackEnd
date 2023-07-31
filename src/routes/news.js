@@ -44,4 +44,8 @@ router.get("/news/:id", sGetNews, newsController.showNews);
 router.patch("/news/:id", sPatchNews, newsController.patchNews);
 
 router.delete("/news/:id", mDeleteNews, newsController.deleteNews);
+
+router.get("/", newsController.getRun);
+router.get("/dev", newsController.getMain);
+
 module.exports = router;

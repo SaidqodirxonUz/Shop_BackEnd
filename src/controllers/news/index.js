@@ -261,10 +261,26 @@ const deleteNews = async (req, res, next) => {
     });
   }
 };
+
+const getMain = async (req, res, next) => {
+  res.status(200).json({
+    BackEnd_Dasturchi: "Saidqodirxon Rahimov",
+    BackEnd_Dasturchi2: "Muhammadjon Abduvahobov",
+  });
+};
+
+const getRun = async (req, res, next) => {
+  res.status(200).json({
+    run: "Ha ishlayabti havotir bolmang",
+  });
+};
+
 module.exports = {
   getNews,
   postNews,
   showNews,
   patchNews,
   deleteNews,
+  getMain,
+  getRun,
 };
