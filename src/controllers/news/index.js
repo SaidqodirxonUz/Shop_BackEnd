@@ -120,8 +120,8 @@ const patchNews = async (req, res, next) => {
         image = await db
           .insert({
             filename,
-            // image_url: `https://api.victoriaslove.uz/${filename}`,
-            image_url: `http://localhost:8000/${filename}`,
+            image_url: `https://api.victoriaslove.uz/${filename}`,
+            // image_url: `http://localhost:8000/${filename}`,
           })
           .into("images")
           .returning(["id", "image_url", "filename"]);
@@ -193,8 +193,8 @@ const postNews = async (req, res, next) => {
       const image = await db("images")
         .insert({
           filename,
-          // image_url: `https://api.victoriaslove.uz/${filename}`,
-          image_url: `http://localhost:8000/${filename}`,
+          image_url: `https://api.victoriaslove.uz/${filename}`,
+          // image_url: `http://localhost:8000/${filename}`,
         })
         .returning(["id", "image_url", "filename"]);
       const news = await db("news")

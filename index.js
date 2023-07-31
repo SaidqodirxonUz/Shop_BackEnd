@@ -10,6 +10,7 @@ const bannerRoutes = require("./src/routes/banner");
 const newsRoutes = require("./src/routes/news");
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 console.log(path.join(__dirname, "public"));
 app.use(express.static(path.join(__dirname, "public")));
