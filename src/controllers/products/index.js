@@ -67,6 +67,7 @@ const patchProducts = async (req, res, next) => {
     const { ...changes } = req.body;
     const { id } = req.params;
     const reqfile = req?.files;
+
     console.log(reqfile, "request files");
     const existing = await db("products").where({ id }).first();
 
@@ -75,44 +76,63 @@ const patchProducts = async (req, res, next) => {
         error: `${id}-idli product yo'q`,
       });
     }
-    // if (req.file?.filename) {
-    if (req.files) {
-      const files = req.files.map((file) => ({
-        filename: file.filename,
-        image_url: `https://api.victoriaslove.uz/${file.filename}`,
-      }));
-      console.log("mapped images", files);
-      // insert(images);
-      let images = await db("images")
-        .insert(files)
-        .returning(["id", "image_url", "filename"]);
 
-      const updated = await db("products")
-        .where({ id })
-        .update({ ...changes, images: { ...images } })
-        .returning(["*"]);
+    console.log(req.user);
+    console.log(req.user.role);
+    const isAdm = req.user.role;
+    console.log(changes);
 
+    if (isAdm == "super_admin" && changes.is_public == "true") {
+      console.log("bu super admin edi");
+      console.log("public boldi");
       return res.status(200).json({
-        updated: [updated[0]],
+        data: `is_public:${changes.is_public}`,
       });
-    } else {
-      const updated = await db("products")
-        .where({ id })
-        .update({ ...changes })
-        .returning(["*"]);
+    } else if (isAdm == "admin" && !changes.is_public) {
+      if (req.files) {
+        const files = req.files.map((file) => ({
+          filename: file.filename,
+          image_url: `https://api.victoriaslove.uz/${file.filename}`,
+        }));
+        console.log("mapped images", files);
 
-      res.status(200).json({
-        updated: updated[0],
+        let images = await db("images")
+          .insert(files)
+          .returning(["id", "image_url", "filename"]);
+
+        const updated = await db("products")
+          .where({ id })
+          .update({ ...changes, images: { ...images } })
+          .returning(["*"]);
+
+        return res.status(200).json({
+          updated: [updated[0]],
+        });
+      } else {
+        const updated = await db("products")
+          .where({ id })
+          .update({ ...changes })
+          .returning(["*"]);
+
+        return res.status(200).json({
+          updated: updated[0],
+        });
+      }
+    } else {
+      console.log("error");
+      return res.status(403).json({
+        error: `You are not authorized to perform this action.`,
+        xato: changes,
       });
     }
   } catch (error) {
     console.log(error);
-    res.status(400).json({
+    return res.status(400).json({
       message: `Xatolik! ${error}`,
     });
-    // throw new NotFoundErr("Nothing founded!");
   }
 };
+
 const postProducts = async (req, res, next) => {
   try {
     const data = req.body;
@@ -122,6 +142,7 @@ const postProducts = async (req, res, next) => {
     //     ...data,
     //   })
     //   .returning(["*"]);
+
     if (req.files) {
       const images = req.files.map((file) => ({
         filename: file.filename,

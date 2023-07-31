@@ -9,10 +9,10 @@ exports.up = function (knex) {
     table.string("phone_number").notNullable().unique();
     table.string("email").unique();
     table.string("password", 350);
-    table.string("brand_name").notNullable().unique();
-    table.string("brand_uz_country").notNullable();
-    table.string("brand_ru_country").notNullable();
-    table.string("brand_en_country").notNullable();
+    table.string("brand_name").unique();
+    table.string("brand_uz_country");
+    table.string("brand_ru_country");
+    table.string("brand_en_country");
     table
       .integer("img_id")
       .references("id")

@@ -173,6 +173,12 @@ const loginUsers = async (req, res) => {
 
     res.status(200).json({
       token,
+
+      users: {
+        id: existing.id,
+        phone_number: existing.phone_number,
+        role: existing.role,
+      },
     });
   } catch (error) {
     res.status(500).json({

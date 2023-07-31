@@ -13,7 +13,7 @@ const router = express.Router();
 const mPostProducts = [
   upload.array("image"),
   isLoggedIn,
-  hasRole(["admin"]),
+  hasRole(["admin", "super_admin"]),
   genValidator(postProductsSchema),
 ];
 const mPatchProducts = [

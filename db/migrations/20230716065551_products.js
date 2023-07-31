@@ -21,13 +21,14 @@ exports.up = function (knex) {
     table.enum("ru_status", ["в наличии", "нет в наличии"]).notNullable();
     table.enum("en_status", ["in stock", "not available"]).notNullable();
     table.enum("valyuta", ["uzs", "rub", "usd"]).notNullable();
-    table
-      .integer("category_id")
-      .unsigned()
-      .references("id")
-      .inTable("categories")
-      .onDelete("CASCADE")
-      .onUpdate("RESTRICT");
+    table.enum("is_public", [true, false]).defaultTo(false),
+      table
+        .integer("category_id")
+        .unsigned()
+        .references("id")
+        .inTable("categories")
+        .onDelete("CASCADE")
+        .onUpdate("RESTRICT");
     // table
     //   .integer("brand_id")
     //   .unsigned()
@@ -40,7 +41,7 @@ exports.up = function (knex) {
     //   .references("id")
     //   .inTable("images")
     //   .onDelete("CASCADE")
-    //   .onUpdate("RESTRICT");
+    // .onUpdate("RESTRICT");
     // table
     //   .string("img_url")
     //   .references("image_url")
