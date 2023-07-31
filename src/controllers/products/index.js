@@ -26,45 +26,40 @@ const getProducts = async (req, res, next) => {
     });
   }
 };
+const newProducts = async (req, res, next) => {
+  try {
+    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const data = await db("products")
+      .where("created_at", ">", oneWeekAgo)
+      .select("*");
+
+    res.json(data);
+  } catch (error) {
+    // console.log(error);
+    throw new BadRequestErr("Xatolik yuz berdi");
+    // res.status(503).json({
+    //   status: 503,
+    //   errMessage: `Serverda xato ${error}`,
+    // });
+  }
+};
 const showProducts = async (req, res, next) => {
   try {
     const { id } = req.params;
     const product = await db("products").where({ id }).select("*").first();
-   
+
     if (!product) {
       return res.status(400).json({
         error: `${id} - idli product yo'q`,
       });
     }
-    // console.log(product);
-    // if (product) {
-    // let productId = product.id;
-    // console.log(product.id);
-    // let img_id = await db("product_images")
-    //   .where({ productId })
-    //   .select("img_id")
-    //   .first();
-    // console.log(img_id, "this is imgid");
-    // if (!img_id) {
-    //   return res.status(201).json({
-    //     message: "success",
-    //     data: { ...product },
-    //   });
-    // }
-    // imgUrl = await db("images").where({ img_id }).select("image_url");
 
     return res.status(201).json({
       message: "success",
       data: { ...product },
     });
-    // }
-    // return res.status(201).json({
-    //   message: "success",
-    //   data: { ...product },
-    // });
   } catch (error) {
-    // throw new BadRequestErr("Xatolik yuz berdi", error);
-    next(error);
+    throw new BadRequestErr("Xatolik yuz berdi");
   }
 };
 const patchProducts = async (req, res, next) => {
@@ -150,58 +145,6 @@ const postProducts = async (req, res, next) => {
         data: products[0],
       });
     }
-
-    // if (req.files) {
-    //   let productImageRecord = null;
-    //   console.log(files);
-    //   let image = null;
-    //   let product = null;
-    //   //   for (const file of files) {
-    //   const images = [];
-    //   for (let i = 0; i < files.length; i++) {
-    //     const element = files[i];
-    //     console.log(element, "bu file loopdan");
-    //     let filename = files[i].filename;
-    //     image = await db("images")
-    //       .insert({
-    //         filename,
-    //         image_url: `http://localhost:3000/${filename}`,
-    //       })
-    //       .returning(["id", "image_url", "filename"]);
-    //     console.log(image);
-    //     productImageRecord = await db("product_images")
-    //       .insert({
-    //         productId: products[0].id,
-    //         img_id: image[0].id,
-    //       })
-    //       .returning("*");
-    //     console.log(element);
-    //     let img = await db("images")
-    //       .select("image_url")
-    //       .where({ id: productImageRecord[i].img_id })
-    //       .first();
-    //     images.push(img);
-    //   .first();
-    // console.log(productImageRecord);
-    //   }
-    //   console.log(productImageRecord, "..");
-    //   for (let i = 0; i < productImageRecord.length; i++) {
-    // const element = productImageRecord[i];
-
-    // console.log(element);
-    // let img = await db("images")
-    //   .select("image_url")
-    //   .where({ id: productImageRecord[i].img_id })
-    //   .first();
-    // images.push(img);
-    //   }
-    //   console.log(images);
-    //   console.log(images, "images");
-    //   return res.status(200).json({
-    //     data: { ...products[0], ...images[0] },
-    //   });
-    // } else {
-    // }
   } catch (error) {
     console.log(error);
 
@@ -239,6 +182,7 @@ module.exports = {
   getProducts,
   postProducts,
   showProducts,
+  newProducts,
   patchProducts,
   deleteProducts,
 };
