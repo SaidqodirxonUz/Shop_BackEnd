@@ -22,6 +22,9 @@ const mPatchProducts = [
   // hasRole(["admin"]),
   genValidator(patchProductsSchema),
 ];
+///news  
+///rekommrend super adm
+/// trend super adm
 const mDeleteProducts = [isLoggedIn, hasRole(["super_admin", "admin"])];
 
 router.post("/products", mPostProducts, productsController.postProducts);

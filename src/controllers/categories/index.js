@@ -22,17 +22,27 @@ const getCategories = async (req, res, next) => {
         "images.image_url"
       )
       .groupBy("categories.id", "images.id");
+    console.log(Categories);
+    for (let i = 0; i < Categories.length; i++) {
+      const id = Categories[i].id;
+      const product = await db("products")
+        .where({ category_id: id })
+        .select("*");
+      console.log(product, id);
+      Categories[i].totalProducts = product.length;
+      console.log(Categories);
+    }
     return res.status(200).json({
       message: "success",
       data: [...Categories],
     });
   } catch (error) {
     console.log(error);
-    // throw new BadRequestErr("Xatolik yuz berdi", error);
-    res.status(503).json({
-      status: 503,
-      errMessage: `Serverda xato ${error}`,
-    });
+    throw new BadRequestErr("Xatolik yuz berdi");
+    // res.status(503).json({
+    //   status: 503,
+    //   errMessage: `Serverda xato ${error}`,
+    // });
   }
 };
 const showCategories = async (req, res, next) => {
