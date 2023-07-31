@@ -8,39 +8,39 @@ const db = require("../../db/index");
  * @param {express.Response} res
  * @param {knex} db
  */
-const getBanner = async (req, res, next) => {
+const getNews = async (req, res, next) => {
   try {
-    const a = await db.select().from("banner");
-    const banner = await db("banner")
-      .leftJoin("images", "images.id", "banner.banner_img_id")
+    const a = await db.select().from("news");
+    const news = await db("news")
+      .leftJoin("images", "images.id", "news.news_img_id")
       .select(
-        "banner.id",
+        "news.id",
         //
-        "banner.title_uz",
-        "banner.title_ru",
-        "banner.title_en",
+        "news.title_uz",
+        "news.title_ru",
+        "news.title_en",
         //
         //
-        "banner.desc_uz",
-        "banner.desc_ru",
-        "banner.desc_en",
+        "news.desc_uz",
+        "news.desc_ru",
+        "news.desc_en",
         //
         "images.image_url"
       )
-      .groupBy("banner.id", "images.id");
+      .groupBy("news.id", "images.id");
 
-    console.log(banner);
-    res.json(banner);
+    console.log(news);
+    res.json(news);
   } catch (error) {
     console.log("err shu yerdan");
     throw error;
   }
 };
-const showBanner = async (req, res, next) => {
+const showNews = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const banner = await db("banner")
-      // .leftJoin("images", "images.id", "banner.img_id")
+    const news = await db("news")
+      // .leftJoin("images", "images.id", "news.img_id")
       .select(
         "id",
         //
@@ -53,47 +53,47 @@ const showBanner = async (req, res, next) => {
         "desc_ru",
         "desc_en",
 
-        "banner_img_id"
+        "news_img_id"
       )
-      .where({ "banner.id": id })
-      // .groupBy("banner.id", "images.id")
+      .where({ "news.id": id })
+      // .groupBy("news.id", "images.id")
       .first();
-    if (!banner) {
+    if (!news) {
       return res.status(404).json({
         error: `${id} - Not Found`,
       });
     }
-    if (banner.img_id) {
-      let id = banner.img_id;
-      console.log(banner.img_id);
+    if (news.img_id) {
+      let id = news.img_id;
+      console.log(news.img_id);
       imgUrl = await db("images").where({ id }).select("image_url");
       console.log(imgUrl);
       return res.status(201).json({
         message: "success",
-        data: { ...banner, ...imgUrl[0] },
+        data: { ...news, ...imgUrl[0] },
       });
     }
 
-    // if (banner.img_id) {
-    //   let id = banner.img_id;
-    //   console.log(banner.img_id);
+    // if (news.img_id) {
+    //   let id = news.img_id;
+    //   console.log(news.img_id);
 
-    //   const imgurl = await db("banner")
-    //     .join("images", "banners.img_id", "=", "images.id")
+    //   const imgurl = await db("news")
+    //     .join("images", "newss.img_id", "=", "images.id")
     //     .select("image_url")
-    //     .where("banners.id", id);
+    //     .where("news.id", id);
 
     //   console.log(imgurl);
 
     //   return res.status(201).json({
     //     message: "success",
-    //     data: { ...banner, ...imgurl[0] },
+    //     data: { ...news, ...imgurl[0] },
     //   });
     // }
 
     return res.status(201).json({
       message: "success",
-      data: banner,
+      data: news,
     });
   } catch (error) {
     console.log(error);
@@ -102,11 +102,11 @@ const showBanner = async (req, res, next) => {
     });
   }
 };
-const patchBanner = async (req, res, next) => {
+const patchNews = async (req, res, next) => {
   try {
     const { ...changes } = req.body;
     const { id } = req.params;
-    const existing = await db("banner").where({ id }).first();
+    const existing = await db("news").where({ id }).first();
 
     if (!existing) {
       return res.status(404).json({
@@ -120,14 +120,15 @@ const patchBanner = async (req, res, next) => {
         image = await db
           .insert({
             filename,
-            image_url: `https://api.victoriaslove.uz/${filename}`,
+            // image_url: `https://api.victoriaslove.uz/${filename}`,
+            image_url: `http://localhost:8000/${filename}`,
           })
           .into("images")
           .returning(["id", "image_url", "filename"]);
       }
-      const updated = await db("banner")
+      const updated = await db("news")
         .where({ id })
-        .update({ ...changes, banner_img_id: { image }.image[0]?.id })
+        .update({ ...changes, news_img_id: { image }.image[0]?.id })
         .returning([
           "id",
           //
@@ -139,15 +140,16 @@ const patchBanner = async (req, res, next) => {
           "desc_uz",
           "desc_ru",
           "desc_en",
+
           //
         ]);
       res.status(200).json({
         updated: updated[0],
       });
     } else {
-      const updated = await db("banner")
+      const updated = await db("news")
         .where({ id })
-        .update({ ...changes, banner_img_id: null })
+        .update({ ...changes, news_img_id: null })
         .returning([
           "id",
           //
@@ -171,7 +173,7 @@ const patchBanner = async (req, res, next) => {
     });
   }
 };
-const postBanner = async (req, res, next) => {
+const postNews = async (req, res, next) => {
   try {
     const {
       id,
@@ -183,7 +185,7 @@ const postBanner = async (req, res, next) => {
       desc_ru,
       desc_en,
     } = req.body;
-    // console.log(banner);
+    // console.log(news);
     if (req.file?.filename) {
       //  const { filename } = req.file;
       let filename = req.file?.filename;
@@ -191,10 +193,11 @@ const postBanner = async (req, res, next) => {
       const image = await db("images")
         .insert({
           filename,
-          image_url: `https://api.victoriaslove.uz/${filename}`,
+          // image_url: `https://api.victoriaslove.uz/${filename}`,
+          image_url: `http://localhost:8000/${filename}`,
         })
         .returning(["id", "image_url", "filename"]);
-      const banner = await db("banner")
+      const news = await db("news")
         .insert({
           title_uz,
           title_ru,
@@ -204,15 +207,15 @@ const postBanner = async (req, res, next) => {
           desc_ru,
           desc_en,
 
-          banner_img_id: { image }.image[0].id,
+          news_img_id: { image }.image[0].id,
         })
         .returning(["*"]);
 
       res.status(200).json({
-        data: [...banner, image[0]],
+        data: [...news, image[0]],
       });
     } else {
-      const banner = await db("banner")
+      const news = await db("news")
         .insert({
           title_uz,
           title_ru,
@@ -221,13 +224,13 @@ const postBanner = async (req, res, next) => {
           desc_uz,
           desc_ru,
           desc_en,
-          //   banner_img_id: { image }.image[0].id,
-          banner_img_id: null,
+          //   news_img_id: { image }.image[0].id,
+          news_img_id: null,
         })
         .returning(["*"]);
 
       res.status(200).json({
-        data: [...banner],
+        data: [...news],
       });
     }
   } catch (error) {
@@ -236,10 +239,10 @@ const postBanner = async (req, res, next) => {
     res.send(error);
   }
 };
-const deleteBanner = async (req, res, next) => {
+const deleteNews = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const existing = await db("banner").where({ id }).first();
+    const existing = await db("news").where({ id }).first();
 
     if (!existing) {
       return res.status(404).json({
@@ -247,7 +250,7 @@ const deleteBanner = async (req, res, next) => {
       });
     }
 
-    const del = await db("banner").where({ id }).returning(["*"]).del();
+    const del = await db("news").where({ id }).returning(["*"]).del();
 
     res.status(200).json({
       deleted: del,
@@ -259,9 +262,9 @@ const deleteBanner = async (req, res, next) => {
   }
 };
 module.exports = {
-  getBanner,
-  postBanner,
-  showBanner,
-  patchBanner,
-  deleteBanner,
+  getNews,
+  postNews,
+  showNews,
+  patchNews,
+  deleteNews,
 };
